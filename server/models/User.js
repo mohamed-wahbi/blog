@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const Joi = require("joi");
 const userSchema = new mongoose.Schema(
   {
     username: {
@@ -25,7 +26,7 @@ const userSchema = new mongoose.Schema(
     profilePhoto: {
       type: Object,
       default: {
-        url: "",
+        url: "https://cdn.pixabay.com/photo/2015/10/15/22/37/blank-profile-picture-973460__480.png",
         publicId: null,
       },
     },
@@ -46,6 +47,15 @@ const userSchema = new mongoose.Schema(
 
 const User = mongoose.model("Users",userSchema);
 
+//Validate Register User :
+function validateRegisterUser (obj) {
+    const schema = Joi.object({
+        username:Joi.string().trim().min(2).max(100).required(),
+        email:Joi.string().trim().min(5).max(100).required().email(),
+        password :Joi.string().trim().min(8).required()
+    });
+    return schema.validate(obj)
+}
 
 
-module.exports={User};
+module.exports={User,validateRegisterUser};
