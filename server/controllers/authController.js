@@ -3,10 +3,10 @@ const bcrypt = require('bcryptjs');
 const {User,validateRegisterUser,validateLoginUser} = require ('../models/User.js');
 
 /*--------------------------------------------------
-* @desc  Register new User
-* @router /api/auth/register
+* @desc    Register new User
+* @router  /api/auth/register
 * @methode POST
-* @access public
+* @access  public
 ----------------------------------------------------*/
 
 module.exports.registerUserCtrl = asyncHandler(async(req,res)=>{
