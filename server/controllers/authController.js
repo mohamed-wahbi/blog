@@ -1,6 +1,6 @@
 const asyncHandler = require('express-async-handler');
 const bcrypt = require('bcryptjs');
-const {User,validateRegisterUser} = require ('../models/User.js');
+const {User,validateRegisterUser,validateLoginUser} = require ('../models/User.js');
 
 /*--------------------------------------------------
 * @desc  Register new User
@@ -33,4 +33,41 @@ module.exports.registerUserCtrl = asyncHandler(async(req,res)=>{
     await newUser.save();
     //send a response to client
     res.status(201).json({message:'you register successfully , please log in'})
+})
+
+
+
+/*-----------------------------------------------
+* @disc     Log In User
+* @route    /api/auth/login
+* @methode  POST
+* @access   public
+-------------------------------------------------*/
+
+module.exports.loginUserCtrl = asyncHandler(async(req,res)=>{
+    //Validation
+    const {error} = validateLoginUser(req.body);
+    if(error){
+        return res.status(400).json({message:error.details[0].message})
+    }
+    //Find user by email
+    const findEmailUser = await User.findOne({email:req.body.email});
+    if(!findEmailUser){
+        return res.status(400).json({message:'email or password is invalid'});
+    }
+    //Password compare
+    const passwordCompare = await bcrypt.compare(req.body.password,findEmailUser.password);
+    if(!passwordCompare){
+        return res.status(400).json({message:'email or password is invalid'});
+    }
+    //creation of token (jwt:jsonwebtoken)
+    const token = findEmailUser.generateAuthToken()
+    //send response 
+    res.status(200).json({
+        _id : findEmailUser.id,
+        isAdmin : findEmailUser.isAdmin,
+        profilePhoto : findEmailUser.profilePhoto,
+        token
+
+    })
 })

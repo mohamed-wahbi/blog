@@ -1,5 +1,7 @@
 const mongoose = require("mongoose");
 const Joi = require("joi");
+const jwt = require ('jsonwebtoken');
+require('dotenv').config();
 const userSchema = new mongoose.Schema(
   {
     username: {
@@ -45,6 +47,10 @@ const userSchema = new mongoose.Schema(
   }
 );
 
+userSchema.methods.generateAuthToken = function(){
+  return jwt.sign({id:this._id,isAdmin:this.isAdmin}, process.env.TOKEN_KEY)
+}
+
 const User = mongoose.model("Users",userSchema);
 
 //Validate Register User :
@@ -57,5 +63,13 @@ function validateRegisterUser (obj) {
     return schema.validate(obj)
 }
 
+//validate login user:
+function validateLoginUser (obj){
+  const schema = Joi.object({
+    email:Joi.string().trim().min(5).max(100).required().email(),
+    password:Joi.string().trim().min(8).required()
+  })
+  return schema.validate(obj);
+}
 
-module.exports={User,validateRegisterUser};
+module.exports={User,validateRegisterUser,validateLoginUser}

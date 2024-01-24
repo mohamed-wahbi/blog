@@ -11,7 +11,8 @@ const app = express();
 app.use(express.json());
 
 //routes :
-app.use('/api/auth',authRoute)
+app.use('/api/auth',authRoute);
+
 
 //Runnig Server :
 app.listen(process.env.PORT,()=>console.log('Server Conneted ^_^ in '+process.env.NODE_ENV+' Mode .'));
