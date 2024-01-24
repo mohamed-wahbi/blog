@@ -68,6 +68,5 @@ module.exports.loginUserCtrl = asyncHandler(async(req,res)=>{
         isAdmin : findEmailUser.isAdmin,
         profilePhoto : findEmailUser.profilePhoto,
         token
-
     })
 })
