@@ -67,3 +67,16 @@ module.exports.updateUserProfileCtrl = asyncHandler ( async (req,res)=>{
     res.status(200).json(updatedUser);
 
 })
+
+
+// -------------------------------------------------------------
+// *   @disc       Upload profile photo
+// *   @Router     api/users/profile/profile-photo-upload
+// *   @methode    POST
+// *   @access     private (connected user)
+// -------------------------------------------------------------
+
+//upload profile photo :
+module.exports.profilePhotoUploadCtrl = asyncHandler (async (req,res)=>{
+    res.status(200).json({message:'profile photo successfully uploaded'})
+})
