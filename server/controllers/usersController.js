@@ -78,5 +78,8 @@ module.exports.updateUserProfileCtrl = asyncHandler ( async (req,res)=>{
 
 //upload profile photo :
 module.exports.profilePhotoUploadCtrl = asyncHandler (async (req,res)=>{
+    if(!req.file){
+        return res.status(400).json({message:'no file provided'})
+    }
     res.status(200).json({message:'profile photo successfully uploaded'})
 })
