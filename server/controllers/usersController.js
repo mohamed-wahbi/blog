@@ -3,6 +3,10 @@ const {User, validateUpdateUser} = require('../models/User.js');
 const { Router } = require('express');
 const { get } = require('mongoose');
 const bcrypt = require('bcryptjs')
+const path = require ('path');
+const fs = require ('fs');
+const cloudinary = require('cloudinary')
+const { cloudinaryUpload, cloudinaryRemoveImage } = require('../utils/cloudinary.js');
 /*--------------------------------------------------
 * @desc    Get all Users
 * @router  /api/users/profile
@@ -78,10 +82,39 @@ module.exports.updateUserProfileCtrl = asyncHandler ( async (req,res)=>{
 
 //upload profile photo :
 module.exports.profilePhotoUploadCtrl = asyncHandler (async (req,res)=>{
+   // 1 validation :
     if(!req.file){
         return res.status(400).json({message:'no file provided'})
     }
-    res.status(200).json({message:'profile photo successfully uploaded'})
+    // 2 get the path to the image :
+    const imagePath = path.join(__dirname,`../images/${req.file.filename}`) ;
+
+    // 3 Upload to cloudinary :
+    const dataCloudinary = await cloudinaryUpload(imagePath);
+
+    // 4 Get the user from the DB :
+    const user = await User.findById(req.user.id);
+
+    // 5 Delete the old profile photo if exist :
+    if(user.profilePhoto.publicId !== null){
+        await cloudinaryRemoveImage(user.profilePhoto.publicId);
+    }
+
+    // 6 change the profilePhoto filed in the DB :
+    user.profilePhoto = {
+        url: dataCloudinary.secure_url,
+        publicId :dataCloudinary.public_id
+    }
+    await user.save();
+
+    // 7 send request to the client :
+    res.status(200).json({
+        message:'profile photo successfully uploaded',
+        profilePhoto : user.profilePhoto
+     });
+
+    // 8 remove the image from the servcer :
+    fs.unlinkSync(imagePath);
 })
 
 // -------------------------------------------------------------
@@ -92,6 +125,7 @@ module.exports.profilePhotoUploadCtrl = asyncHandler (async (req,res)=>{
 // -------------------------------------------------------------
 
 module.exports.getUsersCountCtrl = asyncHandler (async (req,res)=>{
+
     const count = await User.countDocuments();
     return res.status(200).json(count)
 })
