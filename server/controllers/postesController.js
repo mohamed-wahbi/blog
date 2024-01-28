@@ -1,0 +1,49 @@
+const fs = require('fs');
+const asyncHandler = require('express-async-handler');
+const {Post, validateCreatePost} = require ('../models/Post');
+const cloudInary = require ('cloudinary');
+const path = require('path');
+const { cloudinaryUpload } = require('../utils/cloudinary');
+
+
+// -------------------------------------------------------------
+// *   @disc       creat new Post
+// *   @Router     api/posts/
+// *   @methode    POST
+// *   @access     private (only logged in user)
+// -------------------------------------------------------------
+module.exports.createPostCtrl = asyncHandler (async (req,res)=>{
+    // 1-validation of image file :
+    if (!req.file){
+        return res.status(400).json ({message:'no file provided'})
+    }
+
+    // 2-validation of post sended :
+    const {error} = validateCreatePost(req.body)
+    if(error){
+        return res.status(400).json({message:error.details[0].message});
+    }
+
+    // 3-uploadFile to cloudInary (image) :
+    const imagePath = path.join(__dirname,`../images/${req.file.filename}`);
+    const uploadImageResult = await cloudinaryUpload(imagePath);
+
+    // 4- create new Post and saved it in the data base :
+    const createdPost = await Post.create({
+        title:req.body.title,
+        description : req.body.description ,
+        category : req.body.category,
+        user : req.user.id,
+        image : {
+            url : uploadImageResult.secure_url,
+            publicId : uploadImageResult.public_id,
+        }
+    });
+    
+    // 5- Send response to the data base :
+    res.status(201).json(createdPost);
+
+    // 6- Remove the image from the server :
+    fs.unlinkSync(imagePath);
+
+})
