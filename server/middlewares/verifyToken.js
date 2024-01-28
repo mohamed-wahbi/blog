@@ -46,6 +46,32 @@ function verifyTokenAndAdminHeaders(req, res, next) {
     }
 }
 
+
+
+// Verify token and isAdmin and user:
+function verifyTokenAndAdminOrUserHeaders(req, res, next) {
+    const authToken = req.headers.authorization;
+    if (authToken) {
+        const token = authToken.split(' ')[1];
+        try {
+            const decodedPayload = jwt.verify(token, process.env.TOKEN_KEY);
+            req.user = decodedPayload;
+            if(req.user.isAdmin || req.params.id === req.user.id){
+                next()
+            }else{
+                return res.status(401).json({  message: 'Not allowed, only Admin' });
+            }
+            
+        } catch (error) {
+            res.status(401).json({ message: 'Invalid token, access denied' });
+        }
+    } else {
+        return res.status(401).json({ message: 'No token provided, access denied' });
+    }
+}
+
+
+
 // Verify Token:
 function verifyTokenQuery(req, res, next) {
     const authToken = req.query.authorization;
@@ -95,4 +121,4 @@ function verifyTokenAndOnlyUser(req, res, next) {
     });
 }
 
-module.exports = { verifyToken, verifyTokenAndAdmin, verifyTokenAndOnlyUser,verifyTokenQuery,verifyTokenAndAdminHeaders };
+module.exports = { verifyToken, verifyTokenAndAdmin, verifyTokenAndOnlyUser,verifyTokenQuery,verifyTokenAndAdminHeaders , verifyTokenAndAdminOrUserHeaders};

@@ -129,3 +129,30 @@ module.exports.getUsersCountCtrl = asyncHandler (async (req,res)=>{
     const count = await User.countDocuments();
     return res.status(200).json(count)
 })
+
+
+// -------------------------------------------------------------
+// *   @disc       delete profile user
+// *   @Router     api/users/profile/:id
+// *   @methode    DELETE
+// *   @access     private (user || (or) only admin)
+// -------------------------------------------------------------
+
+module.exports.deleteProfileCtrl = asyncHandler ( async (req,res) => {
+    console.log(req.headers)
+
+    // get User by id :
+    const userById = await User.findById({_id:req.params.id});
+    if(!userById){
+       return res.status(404).json({message :'no User Profile with this ID in the DB'})
+    };
+    // Delete image profile from the cloudinary :
+    await cloudinaryRemoveImage(userById.profilePhoto.publicId);
+
+    //Delete profile by id :
+    await User.findByIdAndDelete({_id:req.params.id});
+
+    // envoyer une response au client :
+    res.status(200).json({message:'profile deleted successfully .'});
+
+})
