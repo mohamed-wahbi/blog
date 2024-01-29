@@ -95,7 +95,18 @@ module.exports.getSingelPostCtrl = asyncHandler (async (req,res)=>{
     if(!post){
         return res.status(404).json({message:'Post not Founde'})
     }
-
-
     res.status(200).json(post)
+})
+
+
+
+// -------------------------------------------------------------
+// *   @disc       get Post count
+// *   @Router     api/posts/count
+// *   @methode    GET
+// *   @access     public 
+// -------------------------------------------------------------
+module.exports.getPostCountCtrl = asyncHandler (async (req,res)=>{
+    const count = await Post.countDocuments();
+    res.status(200).json(count);
 })
