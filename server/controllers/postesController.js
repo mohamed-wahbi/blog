@@ -80,3 +80,22 @@ module.exports.getAllPostsCtrl = asyncHandler(async(req,res)=>{
     res.status(200).json(posts)
 })
 
+
+
+// -------------------------------------------------------------
+// *   @disc       get one Post by id
+// *   @Router     api/posts/:id
+// *   @methode    GET
+// *   @access     public 
+// -------------------------------------------------------------
+module.exports.getSingelPostCtrl = asyncHandler (async (req,res)=>{
+    const post = await Post.find({_id:req.params.id})
+    .populate("user","-password")
+    ;
+    if(!post){
+        return res.status(404).json({message:'Post not Founde'})
+    }
+
+
+    res.status(200).json(post)
+})
