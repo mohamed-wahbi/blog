@@ -1,6 +1,7 @@
 const mongoose =require('mongoose');
 const JOI = require ('joi');
 const Joi = require('joi');
+const User = require ('../models/User.js')
 
 const postSchema = new mongoose.Schema({
     title:{
@@ -18,7 +19,7 @@ const postSchema = new mongoose.Schema({
     },
     user : {
         type:mongoose.Schema.Types.ObjectId,
-        ref:'User',
+        ref:"User",
         required:true
     },
     category : {
@@ -40,7 +41,7 @@ const postSchema = new mongoose.Schema({
     ]
 },
 {
-    timeseries :true
+    timestamps :true
 }
 
 )
