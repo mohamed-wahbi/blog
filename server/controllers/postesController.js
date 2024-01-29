@@ -3,7 +3,7 @@ const asyncHandler = require('express-async-handler');
 const {Post, validateCreatePost} = require ('../models/Post');
 const cloudInary = require ('cloudinary');
 const path = require('path');
-const { cloudinaryUpload } = require('../utils/cloudinary');
+const { cloudinaryUpload, cloudinaryRemoveImage } = require('../utils/cloudinary');
 
 
 // -------------------------------------------------------------
@@ -109,4 +109,28 @@ module.exports.getSingelPostCtrl = asyncHandler (async (req,res)=>{
 module.exports.getPostCountCtrl = asyncHandler (async (req,res)=>{
     const count = await Post.countDocuments();
     res.status(200).json(count);
+})
+
+
+
+// -------------------------------------------------------------
+// *   @disc       Delete Post
+// *   @Router     api/posts/:id
+// *   @methode    DELETE
+// *   @access     private (only admin or owner of the post) 
+// -------------------------------------------------------------
+module.exports.deletePostCtrl = asyncHandler(async(req,res)=>{
+    const post = await Post.findById({_id:req.params.id})
+    if(!post){
+        return res.status(403).json({message:"post not finded"})
+    }
+
+    if(req.user.isAdmin || req.user.id === post.user.toString()){
+        await Post.findByIdAndDelete({_id:req.params.id});
+        await cloudinaryRemoveImage(post.image.publicId);
+        res.status(200).json({message:"Post deleted successfully",postId : post._id})
+    }else{
+        res.status(403).json({message:'access denied , forbiden'})
+    }
+
 })
