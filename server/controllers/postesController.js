@@ -174,3 +174,54 @@ module.exports.updatePostCtrl = asyncHandler(async (req,res)=>{
     res.status(200).json(updatedPost)
 
 })
+
+
+
+// -------------------------------------------------------------
+// *   @disc       Update Post
+// *   @Router     api/posts/upload-image/:id
+// *   @methode    PUT
+// *   @access     private (only owner of the post) 
+// -------------------------------------------------------------
+module.exports.updatePostImageCtrl = asyncHandler(async (req,res)=>{
+    //validation :
+    const {error} = validateUpdatePost(req.body);
+    if(error){
+        return res.status(400).json({message:error.details[0].message});
+    }
+
+    //get the post from the DB and check if exist :
+    const post = await Post.findById({_id:req.params.id});
+    if(!post){
+        return res.status(400).json({message:"Post not found ."})
+    };
+
+    //check if this post brlong to logged in user :
+    if(req.user.id !== post.user.toString()){
+        return res.status(403).json({message:"access denied , you are not allowed ."});
+    }
+
+    //delete the old image from cloudInary :
+    await cloudinaryRemoveImage(post.image.publicId);
+
+    //Upload the new image to the cloudInary :
+    const imagePath = path.join(__dirname,`../images/${req.file.filename}`);
+    const result = await cloudinaryUpload(imagePath);
+
+    //Update post Image from cloudInary :
+    const updatedPost = await Post.findByIdAndUpdate({_id:req.params.id},{
+        $set:{
+            image:{
+                url:result.secure_url,
+                publicId : result.public_id
+            }
+        }
+    },{new:true}).populate("user","-password")
+    
+    // send response to client :
+    res.status(200).json(updatedPost)
+
+    //remove image from server :
+    fs.unlinkSync(imagePath);
+})
+

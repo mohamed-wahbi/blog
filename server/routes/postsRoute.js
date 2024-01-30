@@ -1,5 +1,5 @@
 const express = require('express');
-const { createPostCtrl, getAllPostsCtrl, getSingelPostCtrl, getPostCountCtrl, deletePostCtrl, updatePostCtrl } = require('../controllers/postesController');
+const { createPostCtrl, getAllPostsCtrl, getSingelPostCtrl, getPostCountCtrl, deletePostCtrl, updatePostCtrl, updatePostImageCtrl } = require('../controllers/postesController');
 const uploadFile = require('../middlewares/photoUpload');
 const { verifyToken } = require('../middlewares/verifyToken');
 const validateObjectId = require('../middlewares/validateObjectId.js');
@@ -22,7 +22,9 @@ router.route("/:id")
 .put(validateObjectId,verifyToken,updatePostCtrl)
 
 
-
+// api/posts/upload-image/:id
+router.route('/upload-image/:id')
+.put(validateObjectId,verifyToken,uploadFile.single("image"),updatePostImageCtrl)
 
 
 module.exports = router ;
