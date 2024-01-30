@@ -1,5 +1,5 @@
 const express = require('express');
-const { createPostCtrl, getAllPostsCtrl, getSingelPostCtrl, getPostCountCtrl, deletePostCtrl } = require('../controllers/postesController');
+const { createPostCtrl, getAllPostsCtrl, getSingelPostCtrl, getPostCountCtrl, deletePostCtrl, updatePostCtrl } = require('../controllers/postesController');
 const uploadFile = require('../middlewares/photoUpload');
 const { verifyToken } = require('../middlewares/verifyToken');
 const validateObjectId = require('../middlewares/validateObjectId.js');
@@ -19,6 +19,7 @@ router.route("/count").get(getPostCountCtrl)
 router.route("/:id")
 .get(validateObjectId,getSingelPostCtrl)
 .delete(validateObjectId,verifyToken,deletePostCtrl)
+.put(validateObjectId,verifyToken,updatePostCtrl)
 
 
 

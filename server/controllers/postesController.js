@@ -1,6 +1,6 @@
 const fs = require('fs');
 const asyncHandler = require('express-async-handler');
-const {Post, validateCreatePost} = require ('../models/Post');
+const {Post, validateCreatePost, validateUpdatePost} = require ('../models/Post');
 const cloudInary = require ('cloudinary');
 const path = require('path');
 const { cloudinaryUpload, cloudinaryRemoveImage } = require('../utils/cloudinary');
@@ -132,5 +132,45 @@ module.exports.deletePostCtrl = asyncHandler(async(req,res)=>{
     }else{
         res.status(403).json({message:'access denied , forbiden'})
     }
+
+})
+
+
+
+// -------------------------------------------------------------
+// *   @disc       Update Post
+// *   @Router     api/posts/:id
+// *   @methode    PUT
+// *   @access     private (only owner of the post) 
+// -------------------------------------------------------------
+module.exports.updatePostCtrl = asyncHandler(async (req,res)=>{
+    //validation :
+    const {error} = validateUpdatePost(req.body);
+    if(error){
+        return res.status(400).json({message:error.details[0].message});
+    }
+
+    //get the post from the DB and check if exist :
+    const post = await Post.findById({_id:req.params.id});
+    if(!post){
+        return res.status(400).json({message:"Post not found ."})
+    };
+
+    //check if this post brlong to logged in user :
+    if(req.user.id !== post.user.toString()){
+        return res.status(403).json({message:"access denied , you are not allowed ."});
+    }
+
+    //Update post :
+    const updatedPost = await Post.findByIdAndUpdate({_id:req.params.id},{
+        $set:{
+            title:req.body.title,
+            description:req.body.description,
+            category:req.body.category
+        }
+    },{new:true}).populate("user","-password")
+    
+    // send response to client :
+    res.status(200).json(updatedPost)
 
 })

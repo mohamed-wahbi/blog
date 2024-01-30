@@ -156,3 +156,6 @@ module.exports.deleteProfileCtrl = asyncHandler ( async (req,res) => {
     res.status(200).json({message:'profile deleted successfully .'});
 
 })
+
+
+
