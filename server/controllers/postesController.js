@@ -4,6 +4,7 @@ const {Post, validateCreatePost, validateUpdatePost} = require ('../models/Post'
 const cloudInary = require ('cloudinary');
 const path = require('path');
 const { cloudinaryUpload, cloudinaryRemoveImage } = require('../utils/cloudinary');
+const { userInfo } = require('os');
 
 
 // -------------------------------------------------------------
@@ -225,3 +226,40 @@ module.exports.updatePostImageCtrl = asyncHandler(async (req,res)=>{
     fs.unlinkSync(imagePath);
 })
 
+
+
+// -------------------------------------------------------------
+// *   @disc       Toggel like Post
+// *   @Router     api/posts/like/:id
+// *   @methode    PUT
+// *   @access     private (logged in users) 
+// -------------------------------------------------------------
+module.exports.toggelLikeCtrl = asyncHandler(async (req,res)=>{
+    const id = req.params.id;
+    const loggedInUser = req.user.id;
+
+    let post = await Post.findById({_id:id});
+    if(!post){
+        return res.status(404).json({message:"not found Post ."})
+    }
+
+    const isPostAlreadyLiked = post.likes.find((user)=>user.toString() === loggedInUser);
+
+    if(isPostAlreadyLiked){
+        post = await Post.findByIdAndUpdate(
+            {_id:id},
+            {$pull:{likes:loggedInUser}},
+            {new:true}
+        )
+    }else{
+        post = await Post.findByIdAndUpdate(
+            {_id:id},
+            {$push:{likes:loggedInUser}},
+            {new:true}
+            )
+    }
+
+    res.status(200).json(post)
+
+
+})
