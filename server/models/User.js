@@ -44,8 +44,16 @@ const userSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
+    toJSON:{virtuals:true},
+    toObject:{virtuals:true}
   }
 );
+
+userSchema.virtual("posts",{
+  ref:"Post",
+  foreignField:"user",
+  localField:"_id"
+})
 
 userSchema.methods.generateAuthToken = function(){
   return jwt.sign({id:this._id,isAdmin:this.isAdmin}, process.env.TOKEN_KEY)
