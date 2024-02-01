@@ -1,12 +1,12 @@
 const express = require('express');
-const { verifyToken } = require('../middlewares/verifyToken');
-const { createCommentCtrl } = require('../controllers/commentsController');
+const { verifyToken, verifyTokenAndAdminHeaders } = require('../middlewares/verifyToken');
+const { createCommentCtrl, getCommentsCtrl } = require('../controllers/commentsController');
 const router = express.Router();
 
 // api/comments/
 router.route('/')
-.post(verifyToken,createCommentCtrl);
-
+.post(verifyToken,createCommentCtrl)
+.get(verifyTokenAndAdminHeaders,getCommentsCtrl)
 
 
 

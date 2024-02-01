@@ -9,8 +9,6 @@ const { User } = require("../models/User");
 // *   @methode    POST
 // *   @access     private (logged in users) 
 // -------------------------------------------------------------
-
-
 module.exports.createCommentCtrl = asyncHandler ( async (req,res)=>{
     //validation :
     const {error} = validateCreateComment(req.body);
@@ -34,3 +32,19 @@ module.exports.createCommentCtrl = asyncHandler ( async (req,res)=>{
 
 
 })
+
+
+
+// -------------------------------------------------------------
+// *   @disc       get all Comments
+// *   @Router     api/comments
+// *   @methode    GET
+// *   @access     private (only by admin) 
+// -------------------------------------------------------------
+module.exports.getCommentsCtrl = asyncHandler ( async (req,res)=>{
+    const comments = await Comment.find().populate("user","-password");
+    res.status(200).json(comments);
+})
+
+
+
