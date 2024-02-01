@@ -47,4 +47,23 @@ module.exports.getCommentsCtrl = asyncHandler ( async (req,res)=>{
 })
 
 
+// -------------------------------------------------------------
+// *   @disc       delete Comment
+// *   @Router     api/comments/:id
+// *   @methode    DELETE
+// *   @access     private (only by admin or owner of the comment (user)) 
+// -------------------------------------------------------------
+module.exports.deleteCommentCtrl =asyncHandler ( async (req,res)=>{
+    const comment = await Comment.findById({_id:req.params.id});
+    if(!comment){
+        return res.status(404).json({message:"comment not found"})
+    }
 
+    if(req.user.isAdmin || req.user.id === comment.user._id.toString()) {
+        await Comment.findByIdAndDelete({_id:req.params.id});
+        res.status(200).json({message:"commment deleted successfully "})
+    }
+    else{
+        res.status(403).json({message:'access denied , not allowed'})
+    }
+})
