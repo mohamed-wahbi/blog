@@ -22,3 +22,16 @@ module.exports.createCategoryCtrl = asyncHandler ( async (req,res)=>{
 
     res.status(201).json(category);
 })
+
+
+
+// -------------------------------------------------------------
+// *   @disc       get all categories
+// *   @Router     api/categorys
+// *   @methode    GET
+// *   @access     public
+// -------------------------------------------------------------
+module.exports.getAllCategoryCtrl = asyncHandler (async (req,res)=>{
+    const categories = await Category.find();
+    res.status(200).json(categories);
+})
