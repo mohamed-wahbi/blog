@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const JOI = require('joi');
+const {Post} = require ('../models/Post.js')
 
 const commentSchema = new mongoose.Schema({
     postId :{

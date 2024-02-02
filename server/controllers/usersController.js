@@ -6,14 +6,17 @@ const bcrypt = require('bcryptjs')
 const path = require ('path');
 const fs = require ('fs');
 const cloudinary = require('cloudinary')
-const { cloudinaryUpload, cloudinaryRemoveImage } = require('../utils/cloudinary.js');
+const { cloudinaryUpload, cloudinaryRemoveImage ,cloudinaryRemoveMultipleImages} = require('../utils/cloudinary.js');
+const {Comment} = require ('../models/Comment.js');
+const {Post} = require ('../models/Post.js');
+
+
 /*--------------------------------------------------
 * @desc    Get all Users
 * @router  /api/users/profile
 * @methode GET
 * @access  private(only admine)
 ----------------------------------------------------*/
-
 module.exports.getAllUsersCtrl = asyncHandler(async (req,res)=>{
     // console.log(req.query.Authorization.split(" ")[1])
     // if(!req.user.isAdmin){
@@ -24,13 +27,13 @@ module.exports.getAllUsersCtrl = asyncHandler(async (req,res)=>{
 })
 
 
+
 // -------------------------------------------------------------
 // *   @disc       get profile users
 // *   @Router     api/users/profile/:id 
 // *   @methode    get
 // *   @access     public
 // -------------------------------------------------------------
-
 module.exports.getUserProfileCtrl = asyncHandler(async (req,res)=>{
     const user = await User.findById({_id:req.params.id}).select(["-password"]).populate("posts");
     if(!user){
@@ -40,13 +43,13 @@ module.exports.getUserProfileCtrl = asyncHandler(async (req,res)=>{
 })
 
 
+
 // -------------------------------------------------------------
 // *   @disc       update profile user
 // *   @Router     api/users/profile/:id 
 // *   @methode    put
 // *   @access     private (only user himself)
 // -------------------------------------------------------------
-
 module.exports.updateUserProfileCtrl = asyncHandler ( async (req,res)=>{
     //validation :
     const {error} = validateUpdateUser(req.body);
@@ -73,13 +76,13 @@ module.exports.updateUserProfileCtrl = asyncHandler ( async (req,res)=>{
 })
 
 
+
 // -------------------------------------------------------------
 // *   @disc       Upload profile photo
 // *   @Router     api/users/profile/profile-photo-upload
 // *   @methode    POST
 // *   @access     private (connected user)
 // -------------------------------------------------------------
-
 //upload profile photo :
 module.exports.profilePhotoUploadCtrl = asyncHandler (async (req,res)=>{
    // 1 validation :
@@ -117,18 +120,23 @@ module.exports.profilePhotoUploadCtrl = asyncHandler (async (req,res)=>{
     fs.unlinkSync(imagePath);
 })
 
+
+
+
 // -------------------------------------------------------------
 // *   @disc       Count profile user
 // *   @Router     api/users/count
 // *   @methode    GET
 // *   @access     private (only admin)
 // -------------------------------------------------------------
-
 module.exports.getUsersCountCtrl = asyncHandler (async (req,res)=>{
 
     const count = await User.countDocuments();
     return res.status(200).json(count)
 })
+
+
+
 
 
 // -------------------------------------------------------------
@@ -137,7 +145,6 @@ module.exports.getUsersCountCtrl = asyncHandler (async (req,res)=>{
 // *   @methode    DELETE
 // *   @access     private (user || (or) only admin)
 // -------------------------------------------------------------
-
 module.exports.deleteProfileCtrl = asyncHandler ( async (req,res) => {
     console.log(req.headers)
 
@@ -146,8 +153,24 @@ module.exports.deleteProfileCtrl = asyncHandler ( async (req,res) => {
     if(!userById){
        return res.status(404).json({message :'no User Profile with this ID in the DB'})
     };
+
+    //get all posts from db :
+    const posts = await Post.find({user:userById._id});
+
+    //get the publicIds from the db :
+    const publicIds = posts?.map((post)=>post.image.publicId);
+
+    //delete all image from cloudInary that belong to this user :
+    if (publicIds?.length>0){
+        await cloudinaryRemoveMultipleImages(publicIds)
+    }
+
     // Delete image profile from the cloudinary :
     await cloudinaryRemoveImage(userById.profilePhoto.publicId);
+
+    //delete user comment and posts :
+    await Comment.deleteMany({user :userById._id})
+    await Post.deleteMany({user :userById._id})
 
     //Delete profile by id :
     await User.findByIdAndDelete({_id:req.params.id});

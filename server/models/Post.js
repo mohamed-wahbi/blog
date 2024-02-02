@@ -2,7 +2,7 @@ const mongoose =require('mongoose');
 const JOI = require ('joi');
 const Joi = require('joi');
 const User = require ('../models/User.js')
-
+const { Comment } = require('../models/Comment.js'); 
 const postSchema = new mongoose.Schema({
     title:{
         type:String,
@@ -41,10 +41,19 @@ const postSchema = new mongoose.Schema({
     ]
 },
 {
-    timestamps :true
+    timestamps :true,
+    toJSON:{virtuals:true},
+    toObject:{virtuals:true}
 }
+);
 
+postSchema.virtual("comment",{
+    ref:"Comment",
+    foreignField:"postId",
+    localField:"_id"
+} 
 )
+
 
 const Post = mongoose.model('Post',postSchema);
 

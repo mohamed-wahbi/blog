@@ -5,6 +5,7 @@ const cloudInary = require ('cloudinary');
 const path = require('path');
 const { cloudinaryUpload, cloudinaryRemoveImage } = require('../utils/cloudinary');
 const { userInfo } = require('os');
+const { Comment } = require('../models/Comment.js');
 
 
 // -------------------------------------------------------------
@@ -76,6 +77,7 @@ module.exports.getAllPostsCtrl = asyncHandler(async(req,res)=>{
         posts = await Post.find()
         .sort({createdAt:-1})
         .populate("user","-password")
+        
     }
 
     res.status(200).json(posts)
@@ -91,8 +93,8 @@ module.exports.getAllPostsCtrl = asyncHandler(async(req,res)=>{
 // -------------------------------------------------------------
 module.exports.getSingelPostCtrl = asyncHandler (async (req,res)=>{
     const post = await Post.find({_id:req.params.id})
-    .populate("user","-password")
-    ;
+    .populate("user",["-password"])
+    
     if(!post){
         return res.status(404).json({message:'Post not Founde'})
     }
@@ -129,6 +131,8 @@ module.exports.deletePostCtrl = asyncHandler(async(req,res)=>{
     if(req.user.isAdmin || req.user.id === post.user.toString()){
         await Post.findByIdAndDelete({_id:req.params.id});
         await cloudinaryRemoveImage(post.image.publicId);
+        //delete all posts :
+        await Comment.deleteMany({postId:post._id})
         res.status(200).json({message:"Post deleted successfully",postId : post._id})
     }else{
         res.status(403).json({message:'access denied , forbiden'})
