@@ -6,8 +6,7 @@ const usersRoute = require('./routes/usersRoute.js');
 const postsRoute = require('./routes/postsRoute.js');
 const commentsRoute = require ('./routes/commentsRoute.js')
 const categorysRoute = require ('./routes/categorysRoute.js')
-
-
+const {errorHandler,notFound} = require("./middlewares/error.js");
 
 //init App :
 const app = express();
@@ -22,6 +21,9 @@ app.use('/api/posts',postsRoute);
 app.use('/api/comments',commentsRoute);
 app.use('/api/categories',categorysRoute);
 
+
+//error handler middlweare :
+app.use(errorHandler);
 
 //Runnig Server :
 app.listen(process.env.PORT,()=>console.log('Server Conneted ^_^ in '+process.env.NODE_ENV+' Mode .'));
