@@ -67,3 +67,42 @@ module.exports.deleteCommentCtrl =asyncHandler ( async (req,res)=>{
         res.status(403).json({message:'access denied , not allowed'})
     }
 })
+
+
+
+
+// -------------------------------------------------------------
+// *   @disc       Update Comment
+// *   @Router     api/comments/:id
+// *   @methode    PUT
+// *   @access     private (only owner of the comment) 
+// -------------------------------------------------------------
+module.exports.updateCommentCtrl = asyncHandler (async (req,res)=>{
+    const {error} = validateUpdateComment(req.body);
+    if (error) {
+        return res.status(404).json({message:error.details[0].message})
+    };
+
+    const comment = await Comment.findById({_id:req.params.id});
+    if(!comment){
+        return res.status(404).json({message:"comment not found"})
+    };
+
+    if(req.user.id !== comment.user.toString()) {
+        return res.status(403).json({message:"access denied, only owner of the post can updated it "})
+    };
+
+    const updatedComment = await Comment.findByIdAndUpdate(
+        {_id:req.params.id},
+        {
+            $set:{
+                text:req.body.text
+            }
+        },
+        {new:true})
+
+
+    res.status(200).json(updatedComment)
+
+
+})

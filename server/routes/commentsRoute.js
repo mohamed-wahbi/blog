@@ -1,6 +1,6 @@
 const express = require('express');
 const { verifyToken, verifyTokenAndAdminHeaders } = require('../middlewares/verifyToken');
-const { createCommentCtrl, getCommentsCtrl, deleteCommentCtrl } = require('../controllers/commentsController');
+const { createCommentCtrl, getCommentsCtrl, deleteCommentCtrl, updateCommentCtrl } = require('../controllers/commentsController');
 const router = express.Router();
 const validateObjectId = require('../middlewares/validateObjectId');
 
@@ -12,7 +12,7 @@ router.route('/')
 // api/comments/:id
 router.route('/:id')
 .delete(validateObjectId,verifyToken,deleteCommentCtrl)
-
+.put(validateObjectId,verifyToken,updateCommentCtrl)
 
 
 
