@@ -5,6 +5,7 @@ const authRoute = require('./routes/authRoute.js');
 const usersRoute = require('./routes/usersRoute.js');
 const postsRoute = require('./routes/postsRoute.js');
 const commentsRoute = require ('./routes/commentsRoute.js')
+const categorysRoute = require ('./routes/categorysRoute.js')
 
 
 
@@ -18,7 +19,8 @@ app.use(express.json());
 app.use('/api/auth',authRoute);
 app.use('/api/users',usersRoute);
 app.use('/api/posts',postsRoute);
-app.use('/api/comments',commentsRoute)
+app.use('/api/comments',commentsRoute);
+app.use('/api/categories',categorysRoute);
 
 
 //Runnig Server :
