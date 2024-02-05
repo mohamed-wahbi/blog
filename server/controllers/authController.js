@@ -70,3 +70,5 @@ module.exports.loginUserCtrl = asyncHandler(async(req,res)=>{
         token
     })
 })
+
+
