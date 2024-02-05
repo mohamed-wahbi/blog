@@ -1,6 +1,6 @@
 import React from "react";
 
-const HeaderLeft = (toggel, setToggle) => {
+const HeaderLeft = ({toggel, setToggle}) => {
   return (
     <div className="header-left">
       <div className="header-logo">
