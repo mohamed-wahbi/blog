@@ -1,7 +1,9 @@
 import React from 'react'
 import './home.css'
 import PostList from '../../components/posts/PostList'
-import {posts} from '../../dummyData'
+import Sidebar from '../../components/sidebar/Sidebar'
+import {posts,categories} from '../../dummyData'
+import { Link } from 'react-router-dom'
 
 
 
@@ -18,8 +20,11 @@ const Home = () => {
 
       <div className="home-latest-post">Latest Posts</div>
       <div className="home-container">
-        <PostList posts={posts}/>
-        <div className="post-sidebar">side bar</div>
+        <PostList posts={posts.slice(0,3)}/>
+        <Sidebar categories={categories} />
+      </div>
+      <div className="home-see-posts-link">
+        <Link to='/posts' className='home-link'>See All Posts</Link>
       </div>
     </section>
   )

@@ -1,0 +1,70 @@
+.sidebar {
+    flex: 3;
+    margin-left: 20px;
+}
+
+.sidebar-title {
+    color: var(--primary-color);
+    text-align: center;
+    padding: 5px;
+    font-size: 24px;
+    border-top: 1px solid var(--primary-color);
+    border-bottom: 1px solid var(--primary-color);
+}
+
+.sidebar-links {
+    padding: 10px;
+}
+
+.sidebar-link {
+    margin: 15px 0;
+    font-size: 17px;
+    font-weight: 500;
+    color: var(--primary-color);
+    background-color: rgb(170,168,168);
+    cursor:pointer;
+    text-align: center;
+    position: relative;
+    text-transform: capitalize;
+    display: block;
+    clip-path: polygon(100% 0%,100% 50% ,100% 100% ,5% 100%,0% 50%,5% 0);
+    padding: 5px 0px;
+    transition: 0.4s;
+}
+
+.sidebar-link:hover {
+    background-color: var(--pumpkin-color);
+    color: var(--white-color);
+}
+
+.sidebar-link::after {
+    content: "";
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    position: absolute;
+    left: 15px;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+    background-color: var(--white-color);
+}
+
+.home-see-posts-link {
+    padding: 0 30px;
+    margin: 15px 0;
+}
+
+.home-see-posts-link .home-link {
+    width: 100%;
+    padding: 10px;
+    font-size: 21px;
+    background-color: var(--dark-color);
+    color: var(--white-color);
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    display: block;
+    text-align: center;
+    border-radius: 5px;
+}
