@@ -1,5 +1,12 @@
 import React from 'react'
 import './home.css'
+import PostList from '../../components/posts/PostList'
+import {posts} from '../../dummyData'
+
+
+
+
+
 const Home = () => {
   return (
     <section className="home">
@@ -11,7 +18,7 @@ const Home = () => {
 
       <div className="home-latest-post">Latest Posts</div>
       <div className="home-container">
-        <div className="post-list">post list</div>
+        <PostList posts={posts}/>
         <div className="post-sidebar">side bar</div>
       </div>
     </section>

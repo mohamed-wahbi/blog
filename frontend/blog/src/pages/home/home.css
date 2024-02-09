@@ -47,13 +47,3 @@
     align-items: flex-start;
 }
 
-.post-list {
-    flex: 9;
-    background-color: red;
-}
-
-.post-sidebar {
-    flex: 3;
-    background-color: green;
-
-}
