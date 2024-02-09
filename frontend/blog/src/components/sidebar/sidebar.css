@@ -50,21 +50,20 @@
     background-color: var(--white-color);
 }
 
-.home-see-posts-link {
-    padding: 0 30px;
-    margin: 15px 0;
+/* Media Queries */
+@media (max-width:990px) {
+    .sidebar {
+        margin-left: 0;
+        width: 100%;
+    }
+
+    .sidebar-link::after {
+        left: 30px;
+    }
 }
 
-.home-see-posts-link .home-link {
-    width: 100%;
-    padding: 10px;
-    font-size: 21px;
-    background-color: var(--dark-color);
-    color: var(--white-color);
-    font-weight: 500;
-    cursor: pointer;
-    border: none;
-    display: block;
-    text-align: center;
-    border-radius: 5px;
+@media (max-width:520) {
+    .sidebar-link::after {
+        left: 20px;
+    }
 }
