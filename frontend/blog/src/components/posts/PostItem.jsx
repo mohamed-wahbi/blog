@@ -11,7 +11,7 @@ const postItem = ({post}) => {
             <div className="post-item-info">
                 <div className="post-item-author">
                     <strong>Auther : </strong>
-                    <Link to="/profile/1" >{post.user.username}</Link>
+                    <Link className='post-item-username' to="/profile/1" >{post.user.username}</Link>
                 </div>
                 <div className="post-item-date">
                     {new Date(post.createdAt).toDateString()}
@@ -23,7 +23,7 @@ const postItem = ({post}) => {
             </div>
             <p className='post-item-description'>
                 {post.description}
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsam, quasi quae ipsa consequuntur laborum in delectus nemo, libero minus necessitatibus error? Quae assumenda nobis eveniet sapiente sit illum incidunt corporis?
+                Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsam, quasi quae ipsa consequuntur laborum in delectus nemo, libero minus necessitatibus error? Quae assumenda nobis eveniet sapiente sit illum incidunt corporis?Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsam, quasi quae ipsa consequuntur laborum in delectus nemo, libero minus necessitatibus error? Quae assumenda nobis eveniet sapiente sit illum incidunt corporis?Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsam, quasi quae ipsa consequuntur laborum in delectus nemo, libero minus necessitatibus error? Quae assumenda nobis eveniet sapiente sit illum incidunt corporis?
             </p>
             <Link className='post-item-link' to={`/posts/details/${post._id}`} >Read More...</Link>
         </div>
