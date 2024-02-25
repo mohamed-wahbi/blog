@@ -20,8 +20,6 @@ const App = () => {
           <Route path='/posts' element={<PostsPage/>} />
           <Route path='/posts/create-post' element={<CreatePost/>} />
           <Route path='/admin-dashboard' element={<AdminDashbord/>} />
-
-
         </Routes>
       </BrowserRouter>
     </div>
